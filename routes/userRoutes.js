@@ -1,8 +1,10 @@
 const Router = require('koa-router');
-// const userController = require('../controllers/userController');
+const { createUser } = require('../controllers/authController');
+const validateUser = require('../validators/individualValidator');
+
 
 const router = new Router();
 
-// router.post('/users', userController.createUser );
+router.post('/register', validateUser,createUser);
 
 module.exports = router;
