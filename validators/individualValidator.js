@@ -15,7 +15,9 @@ const validateUser  = async (ctx, next) => {
 
     if (error) {
         ctx.status = 400;
-        ctx.body = { message: 'Validation Error', details: error.details };
+        ctx.body = { message: 'Validation Error', details: error.details.map(err => ({
+            message: err.message,
+        }))};
     } else {
         await next(); // Proceed to the next middleware/controller if validation passes
     }
