@@ -4,10 +4,10 @@ const individualSchema = Joi.object({
     Name: Joi.string().required(),
     password: Joi.string().min(6).max(12).required(),
     Email: Joi.string().email().required(),
-    Address: Joi.string().min(10).max(1000).required(),
-    Pan_No: Joi.string().alphanum().min(0).max(10).required(),
+    Address: Joi.string().min(10).max(100).required(),
+    PAN_No: Joi.string().alphanum().min(0).max(10).required(),
     role: Joi.string().required(),
-    confirmpassword: Joi.string().min(6).max(12).required(),
+
 });
 
 const validateUser  = async (ctx, next) => {

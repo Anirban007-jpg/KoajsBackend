@@ -60,13 +60,6 @@ const individualSchema = new mongoose.Schema({
     Initials: {
         type: String
     },
-    Username: {
-        type: String,
-        trim: true,
-        unique: true,
-        index: true,
-        lowerCase: true
-    },
     photo: {
         data: Buffer,
         contentType: String

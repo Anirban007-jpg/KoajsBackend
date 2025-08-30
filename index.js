@@ -3,6 +3,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
+const cors = require('@koa/cors');
 
 const app = new Koa();
 
@@ -11,7 +12,7 @@ connectDB();
 
 // Middleware
 app.use(bodyParser());
-
+app.use(cors());
 // Routes
 app.use(userRoutes.routes()).use(userRoutes.allowedMethods());
 
