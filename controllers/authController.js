@@ -4,24 +4,24 @@ const bcrypt = require('bcrypt');
 const _ = require('lodash');
 require('dotenv').config()
 
-exports.createUser  = async (ctx) => {
+exports.createUser = async (ctx) => {
     const { PAN_No, password, Email, Address, Name, role } = ctx.request.body;
-    try{
-        const presentuser = await Individual.findOne({Name:ctx.request.body.Name}); 
-    if (!presentuser){
-        let gs = Name.replace(/[a-z]/g, '');
-        let Initials= gs.replace(/\s+/g, '');
-        let profile = `${process.env.CLIENT_URL}/Individual/profile/${Initials}`;
-        var password1 = bcrypt.hashSync(password,10);
-        let Acknowledgement_No = _.times(15, () => _.random(35).toString(36)).join('').toUpperCase()
-        const newUser  = new Individual({PAN_No, password:password1, Email, Address, Initials ,profile, Acknowledgement_No,Name,role });
-        await newUser.save();
-        ctx.status = 200;
-        ctx.body = { message: 'User created successfully', user: newUser  };
-    }
-    else {
-         console.log("User exists")
-    } 
+    try {
+        const presentuser = await Individual.findOne({ Name: ctx.request.body.Name });
+        if (!presentuser) {
+            let gs = Name.replace(/[a-z]/g, '');
+            let Initials = gs.replace(/\s+/g, '');
+            let profile = `${process.env.CLIENT_URL}/Individual/profile/${Initials}`;
+            var password1 = bcrypt.hashSync(password, 10);
+            let Acknowledgement_No = _.times(15, () => _.random(35).toString(36)).join('').toUpperCase()
+            const newUser = new Individual({ PAN_No, password: password1, Email, Address, Initials, profile, Acknowledgement_No, Name, role });
+            await newUser.save();
+            ctx.status = 200;
+            ctx.body = { message: 'USer Registered Successfully', user: newUser };
+        }
+        else {
+            console.log("User exists")
+        }
     } catch (error) {
         console.log(error);
         if (error.code === 11000) {
@@ -31,3 +31,30 @@ exports.createUser  = async (ctx) => {
         }
     }
 };
+
+
+exports.Loginuser = async (ctx) => {
+    const { PAN_No, password } = ctx.request.body;
+    try {
+        const user = await Individual.findOne({ PAN_No: PAN_No });
+        console.log(user);
+
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+        res.cookie('token', token, { expiresIn: '1d' });
+
+        const { Name, _id, PAN_No, Email, role, Initials, Address, profile, Acknowledgement_No, email_verified } = user;
+        ctx.body = {
+            token,
+            user : user
+        }
+    }
+    catch (error) {
+        console.log(error);
+        // if (error.code === 11000) {
+        //     // Handle duplicate key errors (e.g., unique fields)
+        //     ctx.status = 409; // Conflict
+        //     ctx.body = { message: 'Duplicate entry', error: 'Name already exists' };
+        // }
+    }
+}
