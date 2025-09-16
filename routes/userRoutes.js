@@ -6,6 +6,6 @@ const validateUser = require('../validators/individualValidator');
 const router = new Router();
 
 router.post('/register', validateUser,createUser);
-outer.post('/login',Loginuser);
+router.post('/login',Loginuser);
 
 module.exports = router;

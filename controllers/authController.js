@@ -3,6 +3,8 @@ const Individual = require('../models/individual')
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 require('dotenv').config()
+const jwt = require('jsonwebtoken');
+const { expressjwt: ejwt } = require('express-jwt');
 
 exports.createUser = async (ctx) => {
     const { PAN_No, password, Email, Address, Name, role } = ctx.request.body;
@@ -36,18 +38,34 @@ exports.createUser = async (ctx) => {
 exports.Loginuser = async (ctx) => {
     const { PAN_No, password } = ctx.request.body;
     try {
-        const user = await Individual.findOne({ PAN_No: PAN_No });
-        console.log(user);
+        let user = await Individual.findOne({ PAN_No: ctx.request.body.PAN_No });
+        // console.log(user);
+        
+        var checked = bcrypt.compareSync(password, user.password);
+        if (!checked){
+            ctx.status = 400;
+            ctx.body = "Password is wrong"
+        }
 
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-        res.cookie('token', token, { expiresIn: '1d' });
+        let Name = user.Name;
+        let PAN_No = user.PAN_No;
+        let Email = user.Email;
+        let Initials = user.Initials;
+        let Address = user.Address;
+        let profile = user.profile;
+        let Acknowledgement_No = user.Acknowledgement_No;
+        let email_verified = user.email_verified;
 
-        const { Name, _id, PAN_No, Email, role, Initials, Address, profile, Acknowledgement_No, email_verified } = user;
-        ctx.body = {
+      
+        return ctx.response.body = {
             token,
-            user : user
+            user : {Name,PAN_No,Email,Initials,Address,profile,Acknowledgement_No,email_verified},
+            token
         }
+
+        
     }
     catch (error) {
         console.log(error);
@@ -57,4 +75,19 @@ exports.Loginuser = async (ctx) => {
         //     ctx.body = { message: 'Duplicate entry', error: 'Name already exists' };
         // }
     }
+}
+
+exports.requireSignin = ejwt({
+    secret: process.env.JWT_SECRET,
+    algorithms: ["HS256"], // added later
+    credentialsRequired: false,
+    requestProperty: "auth"
+});
+
+  
+exports.signout = (req,res) => {
+    res.clearCookie("token")
+    res.json({
+      message: 'Signout Success'
+    })
 }
