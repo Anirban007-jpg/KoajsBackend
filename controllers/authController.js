@@ -42,10 +42,12 @@ exports.Loginuser = async (ctx) => {
         // console.log(user);
         
         var checked = bcrypt.compareSync(password, user.password);
+        console.log(checked)
+        
         if (!checked){
             ctx.status = 400;
-            ctx.body = "Password is wrong"
-        }
+            ctx.body = {error : "Password is wrong"}
+        }else{
 
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
@@ -58,15 +60,12 @@ exports.Loginuser = async (ctx) => {
         let Acknowledgement_No = user.Acknowledgement_No;
         let role = user.role;
         let email_verified = user.email_verified;
-
       
-        return ctx.response.body = {
+        ctx.body = {
             token,
             user : {Name,PAN_No,Email,Initials,Address,profile,Acknowledgement_No,email_verified,role},
-            token
-        }
-
-        
+        }   
+    }     
     }
     catch (error) {
         console.log(error);
