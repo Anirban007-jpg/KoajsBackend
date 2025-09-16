@@ -56,12 +56,13 @@ exports.Loginuser = async (ctx) => {
         let Address = user.Address;
         let profile = user.profile;
         let Acknowledgement_No = user.Acknowledgement_No;
+        let role = user.role;
         let email_verified = user.email_verified;
 
       
         return ctx.response.body = {
             token,
-            user : {Name,PAN_No,Email,Initials,Address,profile,Acknowledgement_No,email_verified},
+            user : {Name,PAN_No,Email,Initials,Address,profile,Acknowledgement_No,email_verified,role},
             token
         }
 
