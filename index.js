@@ -4,6 +4,7 @@ const bodyParser = require('koa-bodyparser');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const cors = require('@koa/cors');
+const { bearerToken } = require('koa-bearer-token');
 
 const app = new Koa();
 
@@ -13,8 +14,10 @@ connectDB();
 // Middleware
 app.use(bodyParser());
 app.use(cors());
+app.use(bearerToken());
 // Routes
 app.use(userRoutes.routes()).use(userRoutes.allowedMethods());
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;
