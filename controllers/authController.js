@@ -76,14 +76,14 @@ exports.Loginuser = async (ctx) => {
 }
 
 exports.requireSignin = async (ctx, next) => {
-    try{
+    try {
         const token = ctx.request.token;
-        if (token !== null){
+        if (token !== null) {
             await next();
-        }else{
+        } else {
             console.log('u are not logged in');
         }
-    }catch (error) {
+    } catch (error) {
         console.log(error);
         // if (error.code === 11000) {
         //     // Handle duplicate key errors (e.g., unique fields)
@@ -108,13 +108,15 @@ exports.CompanyMiddleware = async (ctx, next) => {
         // console.log(authUserId);
         let user = await Individual.findById({ _id: authUserId._id })
         // console.log(user);
-        if (user.role === "Company" || user.role !== "Citizen" || individual.role !== "Admin") {
-                ctx.body = {
-                    error: "Company Area ! Access Denied"
-                }
+        if (user.role != "Company" || user.role == "Citizen" || user.role == "Admin") {
+            ctx.body = {
+                error: "Company Area ! Access Denied"
             }
-        ctx.request.profile = user;
-        await next();
+        }
+        else {
+            ctx.request.profile = user;
+            await next();
+        }
         // }
     } catch (error) {
         console.log(error);
@@ -133,13 +135,15 @@ exports.CitizenMiddleware = async (ctx, next) => {
         // console.log(authUserId);
         let user = await Individual.findById({ _id: authUserId._id })
         // console.log(user);
-        if (user.role !== "Company" || user.role === "Citizen" || individual.role !== "Admin") {
-                ctx.body = {
-                    error: "Citizen Area ! Access Denied"
-                }
+        if (user.role == "Company" || user.role != "Citizen" || user.role == "Admin") {
+            ctx.body = {
+                error: "Citizen Area ! Access Denied"
             }
-        ctx.request.profile = user;
-        await next();
+        }
+        else {
+            ctx.request.profile = user;
+            await next();
+        }
         // }
     } catch (error) {
         console.log(error);
