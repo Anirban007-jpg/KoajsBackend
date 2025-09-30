@@ -49,7 +49,7 @@ exports.Loginuser = async (ctx) => {
             ctx.status = 400;
             ctx.body = { error: "Password is wrong" }
         } else {
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '30mins' });
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
             let Name = user.Name;
             let PAN_No = user.PAN_No;
             let Email = user.Email;
@@ -110,6 +110,7 @@ exports.CompanyMiddleware = async (ctx, next) => {
         // console.log(user);
         if (user.role != "Company" || user.role == "Citizen" || user.role == "Admin") {
             ctx.body = {
+                status : 401,
                 error: "Company Area ! Access Denied"
             }
         }
@@ -137,6 +138,7 @@ exports.CitizenMiddleware = async (ctx, next) => {
         // console.log(user);
         if (user.role == "Company" || user.role != "Citizen" || user.role == "Admin") {
             ctx.body = {
+                status : 401,
                 error: "Citizen Area ! Access Denied"
             }
         }
