@@ -43,7 +43,7 @@ exports.Loginuser = async (ctx) => {
         // console.log(user);
 
         var checked = bcrypt.compareSync(password, user.password);
-        console.log(checked)
+        // console.log(checked)
 
         if (!checked) {
             ctx.status = 400;

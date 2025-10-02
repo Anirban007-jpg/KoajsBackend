@@ -3,6 +3,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
+const ledgerRoutes = require('./routes/ledgerRoutes');
 const ratelimit = require('koa-ratelimit');
 const Redis = require('ioredis');
 const cors = require('@koa/cors');
@@ -43,6 +44,7 @@ app.use(ratelimit({
   
 // Routes
 app.use(userRoutes.routes()).use(userRoutes.allowedMethods());
+app.use(ledgerRoutes.routes()).use(ledgerRoutes.allowedMethods());
 
 
 // Start the server
