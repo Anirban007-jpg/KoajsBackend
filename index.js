@@ -4,6 +4,10 @@ const bodyParser = require('koa-bodyparser');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const ledgerRoutes = require('./routes/ledgerRoutes');
+const debtorRoutes= require('./routes/debtorRoutes');
+const assetRoutes= require('./routes/assetRoutes');
+const creditorRoutes = require('./routes/creditorRoutes')
+const journalRoutes = require('./routes/journalRoutes')
 const ratelimit = require('koa-ratelimit');
 const Redis = require('ioredis');
 const cors = require('@koa/cors');
@@ -45,6 +49,10 @@ app.use(ratelimit({
 // Routes
 app.use(userRoutes.routes()).use(userRoutes.allowedMethods());
 app.use(ledgerRoutes.routes()).use(ledgerRoutes.allowedMethods());
+app.use(debtorRoutes.routes()).use(debtorRoutes.allowedMethods());
+app.use(assetRoutes.routes()).use(assetRoutes.allowedMethods());
+app.use(creditorRoutes.routes()).use(creditorRoutes.allowedMethods());
+app.use(journalRoutes.routes()).use(journalRoutes.allowedMethods());
 
 
 // Start the server
