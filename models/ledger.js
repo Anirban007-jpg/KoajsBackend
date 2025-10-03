@@ -33,7 +33,7 @@ const ledgerScehma = new mongoose.Schema({
     },
     Currency : {
         type: String,
-        default: '&#8360;'
+        default: 'Rs'
     },
     Closing_Balance_Date : {
         type: Date

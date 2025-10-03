@@ -10,7 +10,7 @@ exports.createLedger = async (ctx) => {
             const newledger = new Ledger({ Ledger_Name,Opening_Balance,type_of_ledger,balance_type,BS_Type_Item,PL_Type_Item,Current_Balance: Current_Balance });
             await newledger.save();
             ctx.status = 200;
-            ctx.body = { message: 'Ledger Created Successfully', ledger: newledger };
+            ctx.body = { message: `${Ledger_Name} Created Successfully`, ledger: newledger };
         }
         else {
             console.log("Ledger alreay exists")
