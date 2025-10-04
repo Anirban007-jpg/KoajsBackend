@@ -54,25 +54,25 @@ exports.updateDebtor= async (ctx) => {
         if (error.code === 11000) {
             // Handle duplicate key errors (e.g., unique fields)
             ctx.status = 409; // Conflict
-            ctx.body = { message: 'Duplicate entry', error: 'Ledger Name already exists' };
+            ctx.body = { message: 'Duplicate entry', error: 'Debtor already exists' };
         }
     }
 }
 
-exports.deleteLedgers = async (ctx) => {
-    const {LedgerName} = ctx.request.body;
+exports.deletedebtor = async (ctx) => {
+    const {DebtorName} = ctx.request.body;
     try{
-        let ledgers = await Ledger.findOne({Ledger_Name: LedgerName});
-        LedgerName = ledgers.Ledger_Name;
-        await ledgers.deleteOne({LedgerName});
+        let debtor = await Debtor.findOne({Debtor_name: DebtorName});
+        DebtorName = debtor.Debtor_name;
+        await ledgers.deleteOne({DebtorName});
         ctx.status = 200;
-        ctx.body = {  message: `${ledgers.Ledger_Name} Deleted`};
+        ctx.body = {  message: `${debtors.Debtor_name} Deleted`};
     } catch (error) {
         console.log(error);
         if (error.code === 11000) {
             // Handle duplicate key errors (e.g., unique fields)
             ctx.status = 409; // Conflict
-            ctx.body = { message: 'Duplicate entry', error: 'Ledger Name already exists' };
+            ctx.body = { message: 'Duplicate entry', error: 'Debtor already exists' };
         }
     }
 }
