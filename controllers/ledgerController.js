@@ -31,9 +31,9 @@ exports.createLedger = async (ctx) => {
 
 exports.getLedgers = async (ctx) => {
     try{
-        let ledgers = await Ledger.find({});
+        let ledgers = await Ledger.find();
         ctx.status = 200;
-        ctx.body = { ledgers: ledgers };
+        ctx.body = ledgers;
     } catch (error) {
         console.log(error);
         if (error.code === 11000) {
