@@ -16,7 +16,10 @@ const assetSchema = new mongoose.Schema({
         type : String,
     },
     Asset_Lifetime : {
-        type : String,
+        type : Number,
+    },
+    Asset_Used : {
+        type : Number,
     },
     Opening_Book_Value : {
         type : Number,
@@ -37,12 +40,12 @@ const assetSchema = new mongoose.Schema({
     Scrap_Value : {
         type: Number
     },
-    Asset_Closing_Value_Date : {
+    Asset_Sale_Date : {
         type: Date
     },
-    Asset_Opening_Value_Date : {
+    Asset_Purchase_Date : {
         type: Date,
-        default: Date.now()
+        default: new Date("<YYYY-mm-dd>")
     }
     
 }, {timestamp: true})

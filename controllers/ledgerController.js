@@ -1,11 +1,13 @@
 
+const moment = require('moment');
 const Ledger = require('../models/ledger')
-
+const { isBefore, isSameDay } = require('date-fns');
 
 exports.createLedger = async (ctx) => {
     const { Ledger_Name,Opening_Balance,type_of_ledger,balance_type,BS_Type_Item,PL_Type_Item } = ctx.request.body;
     try {
-        const presentledger = await Ledger.findOne({ Name: ctx.request.body.Ledger_Name });
+        const presentledger = await Ledger.findOne({ Ledger_Name: ctx.request.body.Ledger_Name });
+        // console.log(presentledger);
         if (!presentledger) {
             let Current_Balance= Opening_Balance;
             const newledger = new Ledger({ Ledger_Name,Opening_Balance,type_of_ledger,balance_type,BS_Type_Item,PL_Type_Item,Current_Balance: Current_Balance });
@@ -14,7 +16,8 @@ exports.createLedger = async (ctx) => {
             ctx.body = { message: `${Ledger_Name} Created Successfully`, ledger: newledger };
         }
         else {
-            console.log("Ledger alreay exists")
+            ctx.status = 401;
+            ctx.body = { message: `${Ledger_Name} already Exsists` };
         }
     } catch (error) {
         console.log(error);
@@ -41,13 +44,22 @@ exports.getLedgers = async (ctx) => {
     }
 }
 
-exports.updateLedgers = async (ctx) => {
-    const {LedgerName, updateValue} = ctx.request.body;
+exports.updateClosingBalanceLedgers = async (ctx) => {
+    const {LedgerName} = ctx.request.body;
     try{
         let ledgers = await Ledger.findOne({Ledger_Name: LedgerName});
-        await ledgers.updateOne({name : ledgers.Ledger_Name}, {Current_Balance: updateValue});
-        ctx.status = 200;
-        ctx.body = {  message: `${ledgers.Ledger_Name} Updated`, ledgers };
+        // console.log(ledgers);
+        let newDate = moment(new Date(Date.now())).format("DD-MM-YYYY");
+        // console.log(newDate);
+        if (!isSameDay(newDate,"31-03-26")){
+            // console.log("hellp");
+            const ledgername = ledgers.Ledger_Name;
+            let updatedledger = await Ledger.updateOne({Ledger_Name: ledgername}, {$set : {Closing_Balance: ledgers.Current_Balance}},{ upsert: true });
+            ctx.status = 200;
+            ctx.body = {  message: `${ledgers.Ledger_Name} Updated`, updatedledger };
+        }else{
+            ctx.body = {  message: `${ledgers.Ledger_Name} cannot be Updated` };
+        }
     } catch (error) {
         console.log(error);
         if (error.code === 11000) {
@@ -62,6 +74,7 @@ exports.deleteLedgers = async (ctx) => {
     const {LedgerName} = ctx.request.body;
     try{
         let ledgers = await Ledger.findOne({Ledger_Name: LedgerName});
+        
         LedgerName = ledgers.Ledger_Name;
         await ledgers.deleteOne({LedgerName});
         ctx.status = 200;

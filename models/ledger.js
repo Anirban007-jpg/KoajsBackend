@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 // const Double = require('@mongoosejs/double')
+var moment = require('moment');
 const { Int32 } = require('mongodb');
 
 const ledgerScehma = new mongoose.Schema({
@@ -29,7 +30,7 @@ const ledgerScehma = new mongoose.Schema({
     },
     Opening_Balance_Date : {
         type: Date,
-        default: Date.now()
+        default: () => new Date(Date.now())
     },
     Currency : {
         type: String,
