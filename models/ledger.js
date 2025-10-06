@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 // const Double = require('@mongoosejs/double')
 var moment = require('moment');
 const { Int32 } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 const ledgerScehma = new mongoose.Schema({
     Ledger_Name : {
@@ -36,6 +37,14 @@ const ledgerScehma = new mongoose.Schema({
         type: String,
         default: 'Rs'
     },
+    Debtors : [{
+        type: ObjectId,
+        ref : "Debtor"
+    }],
+    Creditor : [{
+        type: ObjectId,
+        ref : "Creditor"
+    }],
     Closing_Balance_Date : {
         type: Date
     }

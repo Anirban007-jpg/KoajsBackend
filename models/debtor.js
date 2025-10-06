@@ -4,14 +4,14 @@ const { ObjectId } = require('mongodb');
 
 
 const debtorSchema = new mongoose.Schema({
-    individual : [{
+    individual : {
         type: ObjectId,
         ref : 'Individual' 
-    }],
+    },
     Debtor_name: {
         type: String
     },
-    Debtor_adrress : {
+    Debtor_address : {
         type : String,
     },
     Debtor_contact_no : {
@@ -26,7 +26,12 @@ const debtorSchema = new mongoose.Schema({
     Debtor_Currency : {
         type: String,
         default: 'Rs'
-    }
+    },
+    ledger : [{
+        type: ObjectId,
+        ref : 'Ledger' 
+    }],
+
     
 }, {timestamp: true})
 

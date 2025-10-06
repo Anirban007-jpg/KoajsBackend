@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const debtorSchema = Joi.object({
     Debtor_name : Joi.string().required(),
-    Debtor_adrress: Joi.string().required(),
+    Debtor_address: Joi.string().required(),
     Debtor_contact_no: Joi.string().required(),
     Debtor_email : Joi.string().email().required(),
     Debtor_balance : Joi.number().required(),
