@@ -37,6 +37,12 @@ const ledgerScehma = new mongoose.Schema({
         type: String,
         default: 'Rs'
     },
+    Previous_Balance :{
+        type: Number
+    },
+    Previous_Balance_Date :{
+        type: Date
+    },
     Debtors : [{
         type: ObjectId,
         ref : "Debtor"

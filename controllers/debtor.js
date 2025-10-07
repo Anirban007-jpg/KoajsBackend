@@ -1,6 +1,6 @@
 const Debtor = require('../models/debtor');
 const { jwtDecode } = require("jwt-decode");
-const ledger = require('../models/ledger');
+const Ledger = require('../models/ledger');
 
 exports.createDebtor = async (ctx) => {
     const { Debtor_name, Debtor_address, Debtor_contact_no, Debtor_email, Debtor_balance } = ctx.request.body;
@@ -8,21 +8,25 @@ exports.createDebtor = async (ctx) => {
         const token = ctx.request.token;
         const authUserId = await jwtDecode(token);
         const individual = authUserId._id;
-        const presentdebtor = await Debtor.findOne({ Name: ctx.request.body.Debtor_name });
-        if (!presentdebtor) {
-            ledger = await ledger.findOne({ Ledger_Name: "Debtor A/C" }); 
-            if (!ledger) {
+        const ledger = await Ledger.findOne({ Ledger_Name: "Debtor A/C" }); 
+        // console.log(ledger)
+        if (ledger) {
+            const presentdebtor = await Debtor.findOne({ Name: ctx.request.body.Debtor_name });
+            // console.log(presentdebtor)
+            if (!presentdebtor) {
                 const newdebtor = new Debtor({ Debtor_name, Debtor_address, Debtor_contact_no, Debtor_email, Debtor_balance, individual, ledger: ledger._id,Debtor_Balance_Type : ledger.balance_type });
                 await newdebtor.save();
+                await Ledger.updateOne({Ledger_Name : "Debtor A/C"}, {Debtors: newdebtor._id});
                 ctx.status = 200;
                 ctx.body = { message: `${Debtor_name} Created Successfully`, debtor: newdebtor };
             }
             else {
-                ctx.body = { message: `Create Debtor Ledger A/C First`};
+                ctx.body = { message: `${Debtor_name} Already exsists` };
             }
         }
         else {
-            ctx.body = { message: `${Debtor_name} Already exsists` };
+            ctx.body = { message: `Create Debtor Ledger A/C First`};
+           
         }
     } catch (error) {
         console.log(error);
