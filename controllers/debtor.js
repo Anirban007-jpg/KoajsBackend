@@ -14,7 +14,7 @@ exports.createDebtor = async (ctx) => {
             const presentdebtor = await Debtor.findOne({ Name: ctx.request.body.Debtor_name });
             // console.log(presentdebtor)
             if (!presentdebtor) {
-                const newdebtor = new Debtor({ Debtor_name, Debtor_address, Debtor_contact_no, Debtor_email, Debtor_balance, individual, ledger: ledger._id,Debtor_Balance_Type : ledger.balance_type });
+                const newdebtor = new Debtor({ Debtor_name, Debtor_address, Debtor_contact_no,Balance : {Previous_Balance: Debtor_balance, Previous_Balance_Date: Date.now()}, Debtor_email, Debtor_balance, individual, ledger: ledger._id,Debtor_Balance_Type : ledger.balance_type });
                 await newdebtor.save();
                 await Ledger.updateOne({Ledger_Name : "Debtor A/C"}, {Debtors: newdebtor._id});
                 ctx.status = 200;
