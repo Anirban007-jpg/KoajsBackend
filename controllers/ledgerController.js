@@ -44,6 +44,21 @@ exports.getLedgers = async (ctx) => {
     }
 }
 
+exports.getSpecificLedger = async (ctx) => {
+    try{
+        let ledgers = await Ledger.find({Ledger_Name: "Debtor A/C"});
+        ctx.status = 200;
+        ctx.body = {ledgers};
+    } catch (error) {
+        console.log(error);
+        if (error.code === 11000) {
+            // Handle duplicate key errors (e.g., unique fields)
+            ctx.status = 409; // Conflict
+            ctx.body = { message: 'Duplicate entry', error: 'Ledger Name already exists' };
+        }
+    }
+}
+
 exports.updateClosingBalanceLedgers = async (ctx) => {
     const {LedgerName} = ctx.request.body;
     try{
