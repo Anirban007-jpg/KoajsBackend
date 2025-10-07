@@ -54,7 +54,7 @@ exports.updateClosingBalanceLedgers = async (ctx) => {
         if (isSameDay(newDate,"31-03-26")){
             // console.log("hellp");
             const ledgername = ledgers.Ledger_Name;
-            let updatedledger = await Ledger.updateOne({Ledger_Name: ledgername}, {$set : {Closing_Balance: ledgers.Current_Balance}},{ upsert: true });
+            let updatedledger = await Ledger.updateOne({Ledger_Name: ledgername}, {$set : {Closing_Balance: ledgers.Current_Balance}} , {$push : {Balance: {Previous_Balance: ledgers.Closing_Balance, Previous_Balance_Date: Date.now()}}},{ upsert: true });
             ctx.status = 200;
             ctx.body = {  message: `${ledgers.Ledger_Name} Updated`, updatedledger };
         }else{
