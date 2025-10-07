@@ -26,7 +26,13 @@ const creditorSchema = new mongoose.Schema({
     Creditor_Currency : {
         type: String,
         default: 'Rs'
-    }
+    },
+    Previous_Balance :[{
+        type: Number
+    }],
+    Previous_Balance_Date :[{
+        type: Date
+    }],
     
     
 }, {timestamp: true})

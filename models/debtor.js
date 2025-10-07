@@ -31,12 +31,12 @@ const debtorSchema = new mongoose.Schema({
         type: ObjectId,
         ref : 'Ledger' 
     }],
-    Previous_Balance :{
+    Previous_Balance :[{
         type: Number
-    },
-    Previous_Balance_Date :{
+    }],
+    Previous_Balance_Date :[{
         type: Date
-    },
+    }],
     
 
     
