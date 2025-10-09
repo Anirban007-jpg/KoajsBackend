@@ -10,4 +10,5 @@ The Functions Done by the Backend and database are as follows:
   - $${\color{green}Register \space and \space login \space users}$$
   - $${\color{red}Create \space and \space Update \space Ledgers}$$
   - $${\color{blue}Create \space and \space Upate \space Debtors}$$
-  - $${\color{White}Create \space and \space Upate \space Debtors}$$
+  - $${\color{White}Create \space and \space Upate \space Creditors}$$
+
