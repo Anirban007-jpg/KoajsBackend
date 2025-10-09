@@ -49,7 +49,7 @@ const ledgerScehma = new mongoose.Schema({
         type: ObjectId,
         ref : "Debtor"
     }],
-    Creditor : [{
+    Creditors : [{
         type: ObjectId,
         ref : "Creditor"
     }],

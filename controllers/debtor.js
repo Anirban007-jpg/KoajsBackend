@@ -61,7 +61,7 @@ exports.updateDebtor = async (ctx) => {
 
         // console.log(ledger.Current_Balance);
         // console.log(ledger.Debtors[0]._id);
-
+   
         let sum = 0;
         for (i=0; i<ledger.Debtors.length; i++){
             const result= await Debtor.findById({_id: ledger.Debtors[i]._id});

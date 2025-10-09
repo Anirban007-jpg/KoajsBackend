@@ -11,7 +11,7 @@ const creditorSchema = new mongoose.Schema({
     Creditor_name: {
         type: String,
     },
-    Creditor_adrress : {
+    Creditor_address : {
         type : String,
     },
     Creditor_contact_no : {

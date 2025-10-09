@@ -9,6 +9,6 @@ const { createCreditor, getCreditors, updateCreditor } = require('../controllers
 const router = new Router();
 router.post('/creditor/create', requireSignin, CompanyMiddleware, validateCreditor, createCreditor);
 router.get('/creditor/get', requireSignin, getCreditors);
-router.get('/creditor/update', requireSignin, updateCreditor);
+router.put('/creditor/update', requireSignin, updateCreditor);
 
 module.exports = router;

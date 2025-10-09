@@ -1,8 +1,10 @@
 const Creditor = require("../models/credior")
 const { jwtDecode } = require("jwt-decode");
+const Ledger = require('../models/ledger');
+const math = require("mathjs");
 
 exports.createCreditor = async (ctx) => {
-    const { Creditor_name,Creditor_adrress,Creditor_contact_no,Creditor_email,Creditor_Balance } = ctx.request.body;
+    const { Creditor_name,Creditor_address,Creditor_contact_no,Creditor_email,Creditor_Balance } = ctx.request.body;
     try {
         const token = ctx.request.token;
         const authUserId = await jwtDecode(token);
@@ -13,7 +15,7 @@ exports.createCreditor = async (ctx) => {
             const presentcreditor = await Creditor.findOne({ Creditor_name: Creditor_name });
             // console.log(presentdebtor)
             if (!presentcreditor) {
-                const newcreditor = new Debtor({ Creditor_name,Creditor_adrress,Creditor_contact_no,Creditor_email,Creditor_Balance,Balance : {Previous_Balance: Creditor_Balance, Previous_Balance_Date: Date.now()}, individual, ledger: ledger._id,Creditor_Balance_Type : ledger.balance_type });
+                const newcreditor = new Creditor({ Creditor_name,Creditor_address,Creditor_contact_no,Creditor_email,Creditor_Balance,Balance : {Previous_Balance: Creditor_Balance, Previous_Balance_Date: Date.now()}, individual, ledger: ledger._id,Creditor_Balance_Type : ledger.balance_type });
                 await newcreditor.save();
                 await Ledger.findOneAndUpdate({Ledger_Name : "Creditor A/C"}, {$push : {Creditor: newcreditor._id}}, {upsert: true});
                 ctx.status = 200;
@@ -83,7 +85,7 @@ exports.updateCreditor = async (ctx) => {
         if (error.code === 11000) {
             // Handle duplicate key errors (e.g., unique fields)
             ctx.status = 409; // Conflict
-            ctx.body = { message: 'Duplicate entry', error: 'Ledger Name already exists' };
+            ctx.body = { message: 'Duplicate entry', error: error };
         }
     }
 }
