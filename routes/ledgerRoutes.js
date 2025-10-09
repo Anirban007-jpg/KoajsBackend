@@ -8,7 +8,7 @@ const { createLedger, getLedgers, updateClosingBalanceLedgers, getSpecificLedger
 
 const router = new Router();
 router.post('/ledger/create', requireSignin, CompanyMiddleware, validateLedger, createLedger);
-router.get('/ledger/get', requireSignin, getLedgers);
+router.get('/ledger/get', getLedgers);
 router.get('/ledger/get/specific', requireSignin, getSpecificLedger);
 router.put('/ledger/updateclosingbalance', requireSignin, updateClosingBalanceLedgers);
 

@@ -31,9 +31,9 @@ exports.createLedger = async (ctx) => {
 
 exports.getLedgers = async (ctx) => {
     try{
-        let ledgers = await Ledger.find({});
+        let ledgers = await Ledger.find({}).populate('Debtors', '_id Debtor_name Debtor_address Debtor_contact_no Debtor_email Debtor_balance Balance').populate('Creditors','_id Creditor_name Creditor_address Creditor_contact_no Creditor_email Creditor_Balance Balance');
         ctx.status = 200;
-        ctx.body = ledgers;
+        ctx.body = { ledgers };
     } catch (error) {
         console.log(error);
         if (error.code === 11000) {
