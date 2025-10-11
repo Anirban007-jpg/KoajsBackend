@@ -7,7 +7,7 @@ const ledgerRoutes = require('./routes/ledgerRoutes');
 const debtorRoutes= require('./routes/debtorRoutes');
 const assetRoutes= require('./routes/assetRoutes');
 const creditorRoutes = require('./routes/creditorRoutes')
-const journalRoutes = require('./routes/journalRoutes')
+const journalRoutes = require('./routes/journalRoutes');
 const ratelimit = require('koa-ratelimit');
 const Redis = require('ioredis');
 const cors = require('@koa/cors');
@@ -27,7 +27,7 @@ app.use(bearerToken());
 app.use(ratelimit({
     driver: 'memory',
     db: db,
-    duration: 60000,
+    duration: 12*60*1000,
     errorMessage: 'Sometimes You Just Have to Slow Down.',
     id: (ctx) => ctx.ip,
     headers: {
@@ -39,6 +39,7 @@ app.use(ratelimit({
     disableHeader: false,
     whitelist: (ctx) => {
       // some logic that returns a boolean
+      
     },
     blacklist: (ctx) => {
       // some logic that returns a boolean
@@ -47,12 +48,13 @@ app.use(ratelimit({
   
   
 // Routes
+app.use(journalRoutes.routes()).use(journalRoutes.allowedMethods());
 app.use(userRoutes.routes()).use(userRoutes.allowedMethods());
 app.use(ledgerRoutes.routes()).use(ledgerRoutes.allowedMethods());
 app.use(debtorRoutes.routes()).use(debtorRoutes.allowedMethods());
 app.use(assetRoutes.routes()).use(assetRoutes.allowedMethods());
 app.use(creditorRoutes.routes()).use(creditorRoutes.allowedMethods());
-app.use(journalRoutes.routes()).use(journalRoutes.allowedMethods());
+
 
 
 // Start the server
