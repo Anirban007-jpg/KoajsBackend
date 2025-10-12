@@ -53,6 +53,10 @@ const ledgerScehma = new mongoose.Schema({
         type: ObjectId,
         ref : "Creditor"
     }],
+    Banks : [{
+        type: ObjectId,
+        ref : "Bank"
+    }],
     Closing_Balance_Date : {
         type: Date
     }

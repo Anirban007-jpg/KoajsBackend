@@ -5,6 +5,7 @@ const Ledger = require('../models/ledger');
 const math = require("mathjs");
 const Debtor = require('../models/debtor');
 const { updateDebtor } = require('./debtor');
+const { updateCreditor } = require('./creditor');
 
 exports.createJournal = async (ctx) => {
     const { Debit_Item_AC, Credit_Item_AC, Amount_Deducted, Narration, Transaction_Date, Invoice_Date } = ctx.request.body;
@@ -63,8 +64,35 @@ exports.createJournal = async (ctx) => {
             ctx.status = 200;
             ctx.body = { message: `Journal Created Successfully`, journal };
         } else if ("Purchase A/C".localeCompare(Debit_Item_AC) == 0 && "Creditor A/C".localeCompare(Credit_Item_AC) == 0) {
-            
-            
+            //speacial case 2
+            let trade_disc_amt = parseFloat(ctx.request.body.tda).toFixed(2);
+            let tdair = math.multiply(trade_disc_amt, Amount_Deducted);
+            let newAmtDeductedaftertdir = math.subtract(Amount_Deducted, tdair);
+            let cash_dis_amt = parseFloat(ctx.request.body.cdr).toFixed(2);
+            let disc_recieved = math.multiply(cash_dis_amt, newAmtDeductedaftertdir);
+            let creditor = await Creditor.findOne({ Creditor_name: ctx.request.body.CN });
+            let newAmtDeducted = 0;
+            newAmtDeducted = math.subtract(newAmtDeductedaftertdir, disc_recieved);
+            let Credit_Ledger = await Ledger.findOne({ Ledger_Name: Credit_Item_AC });
+            let Debit_Ledger = await Ledger.findOne({ Ledger_Name: Debit_Item_AC });
+            let newAmt = math.add(parseInt(creditor.Creditor_Balance), parseInt(newAmtDeducted));
+            if (Debit_Ledger.balance_type == "Dr" && Credit_Ledger.Ledger_Name == "Purchase A/C") {
+                let newdebitAmt = math.add(Credit_Ledger.Current_Balance, newAmtDeductedaftertdir);
+                await Ledger.updateOne({ Ledger_Name: Debit_Item_AC }, { Current_Balance: parseInt(newdebitAmt).toFixed(0) }, { upsert: true })
+            } else {
+                let newdebitAmt = math.subtract(Credit_Ledger.Current_Balance, newAmtDeductedaftertdir);
+                if (newdebitAmt < 0) {
+                    ctx.body = { message: `Balance cannot be less than 0` };
+                } else {
+                    await Ledger.updateOne({ Ledger_Name: Debit_Ledger.Ledger_Name }, { Current_Balance: parseInt(newcreditAmt).toFixed(0) }, { upsert: true })
+                }
+            }
+            await Creditor.updateOne({ Creditor_name: creditor.Creditor_name }, { Creditor_Balance: newAmt, Balance: { Previous_Balance: creditor.Creditor_Balance, Previous_Balance_Date: creditor.Previous_Balance_Date } }, { upsert: true });
+            updateCreditor();
+            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeductedaftertdir, Narration, Transaction_Date, Invoice_Date,disc_recieved });
+            await journal.save();
+            ctx.status = 200;
+            ctx.body = { message: `Journal Created Successfully`, journal };
         } else {
             // normal case 
             let Credit_Ledger = await Ledger.findOne({ Ledger_Name: Credit_Item_AC });
