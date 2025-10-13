@@ -123,13 +123,13 @@ exports.createJournal = async (ctx) => {
             let newdebitAmt = 0;
             if (Credit_Ledger.balance_type == "Cr") {
                 newcreditAmt = math.add(Credit_Ledger.Current_Balance, Amount_Deducted);
-                await Ledger.updateOne({ Ledger_Name: Credit_Item_AC }, {$set : { Current_Balance: newcreditAmt }}, { upsert: true })
+                await Ledger.updateOne({ Ledger_Name: Credit_Item_AC },  { Current_Balance: newcreditAmt }, { upsert: true })
             } else {
                 newcreditAmt = math.subtract(Credit_Ledger.Current_Balance, Amount_Deducted);
                 if (newcreditAmt < 0) {
                     ctx.body = { error: `Balance cannot be less than 0` };
                 } else {
-                    await Ledger.updateOne({ Ledger_Name: Credit_Ledger.Ledger_Name }, {$set : { Current_Balance: newcreditAmt }}, { upsert: true })
+                    await Ledger.updateOne({ Ledger_Name: Credit_Ledger.Ledger_Name }, { Current_Balance: newcreditAmt }, { upsert: true })
                 }
             }
             if (Debit_Ledger.balance_type == "Dr") {

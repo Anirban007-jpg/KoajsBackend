@@ -20,9 +20,6 @@ const bankSchema = new mongoose.Schema({
     Bank_MICR: {
         type: String,
     },
-    Bank_Account_No: {
-        type: String
-    },
     ledger: [{
         type: ObjectId,
         ref: 'Ledger'

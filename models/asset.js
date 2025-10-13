@@ -24,7 +24,7 @@ const assetSchema = new mongoose.Schema({
     Opening_Book_Value : {
         type : Number,
     },
-    Opening_Book_Value : {
+    Closing_Book_Value : {
         type: Number
     },
     Asset_Currency : {
@@ -45,7 +45,6 @@ const assetSchema = new mongoose.Schema({
     },
     Asset_Purchase_Date : {
         type: Date,
-        default: new Date("<YYYY-mm-dd>")
     }
     
 }, {timestamp: true})
