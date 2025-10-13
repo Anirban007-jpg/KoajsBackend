@@ -17,7 +17,7 @@ exports.createCreditor = async (ctx) => {
             if (!presentcreditor) {
                 const newcreditor = new Creditor({ Creditor_name,Creditor_address,Creditor_contact_no,Creditor_email,Creditor_Balance,Balance : {Previous_Balance: Creditor_Balance, Previous_Balance_Date: Date.now()}, individual, ledger: ledger._id,Creditor_Balance_Type : ledger.balance_type });
                 await newcreditor.save();
-                await Ledger.findOneAndUpdate({Ledger_Name : "Creditor A/C"}, {$push : {Creditor: newcreditor._id}}, {upsert: true});
+                await Ledger.findOneAndUpdate({Ledger_Name : "Creditor A/C"}, {$push : {Creditors: newcreditor._id}}, {upsert: true});
                 ctx.status = 200;
                 ctx.body = { message: `${Creditor_name} Created Successfully... Update Ledger Balance immediately`, creditor: newcreditor };
             }

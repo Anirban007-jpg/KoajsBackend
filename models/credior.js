@@ -35,7 +35,10 @@ const creditorSchema = new mongoose.Schema({
             type: Date
         }
     }],
-    
+    ledger : [{
+        type: ObjectId,
+        ref : 'Ledger' 
+    }],
     
 }, {timestamp: true})
 

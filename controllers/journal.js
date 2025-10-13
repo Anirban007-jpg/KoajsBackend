@@ -41,7 +41,7 @@ exports.createJournal = async (ctx) => {
                     await Ledger.updateOne({ Ledger_Name: Credit_Ledger.Ledger_Name }, { Current_Balance: parseInt(newcreditAmt).toFixed(0) }, { upsert: true })
                 }
             }
-            await Debtor.updateOne({ Debtor_name: debtor.Debtor_name }, { Debtor_balance: newAmt, Balance: { Previous_Balance: debtor.Debtor_balance, Previous_Balance_Date: debtor.Previous_Balance_Date } }, { upsert: true });
+            await Debtor.updateOne({ Debtor_name: debtor.Debtor_name }, { Debtor_balance: newAmt, $push : { Balance: { Previous_Balance: debtor.Debtor_balance, Previous_Balance_Date: debtor.Previous_Balance_Date } }}, { upsert: true });
             let ledger = await Ledger.findOne({ Ledger_Name: Debit_Item_AC });
             let sum = 0;
             for (i = 0; i < ledger.Debtors.length; i++) {
@@ -58,16 +58,14 @@ exports.createJournal = async (ctx) => {
                 ctx.status = 200;
                 ctx.body = { message: `Debtor Ledger Updated` };
             }
-            // updateDebtor();
-            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeductedaftertdir, Narration, Transaction_Date, Invoice_Date,disc_allowed });
+       
+            console.log(disc_allowed)
+            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeductedaftertdir, Narration, Transaction_Date, Invoice_Date,Disc_Allowed: disc_allowed });
             await journal.save();
             ctx.status = 200;
             ctx.body = { message: `Journal Created Successfully`, journal };
         } else if ("Purchase A/C".localeCompare(Debit_Item_AC) == 0 && "Creditor A/C".localeCompare(Credit_Item_AC) == 0) {
             //speacial case 2
-            let trade_disc_amt = parseFloat(ctx.request.body.tda).toFixed(2);
-            let tdair = math.multiply(trade_disc_amt, Amount_Deducted);
-            let newAmtDeductedaftertdir = math.subtract(Amount_Deducted, tdair);
             let cash_dis_amt = parseFloat(ctx.request.body.cdr).toFixed(2);
             let disc_recieved = math.multiply(cash_dis_amt, newAmtDeductedaftertdir);
             let creditor = await Creditor.findOne({ Creditor_name: ctx.request.body.CN });
@@ -88,7 +86,30 @@ exports.createJournal = async (ctx) => {
                 }
             }
             await Creditor.updateOne({ Creditor_name: creditor.Creditor_name }, { Creditor_Balance: newAmt, Balance: { Previous_Balance: creditor.Creditor_Balance, Previous_Balance_Date: creditor.Previous_Balance_Date } }, { upsert: true });
-            updateCreditor();
+            let ledger = await Ledger.findOne({ Ledger_Name: "Creditor A/C" });
+            // console.log(ledger);
+    
+            // console.log(ledger.Current_Balance);
+            // console.log(ledger.Debtors[0]._id);
+    
+            let sum = 0;
+            for (i=0; i<ledger.Creditors.length; i++){
+                const result= await Creditor.findById({_id: ledger.Creditors[i]._id});
+                // console.log(result);
+                sum = math.add(sum,result.Creditor_Balance);
+                // console.log(sum);
+            }
+            // console.log(sum);
+            let newSum = math.add(sum,ledger.Opening_Balance);
+            if (math.add(ledger.Opening_Balance,sum) == ledger.Current_Balance){
+                ctx.status = 200;
+                ctx.body = { message: `Creditor Ledger already Updated`};
+            }
+            else{
+                await Ledger.findOneAndUpdate({Ledger_Name: ledger.Ledger_Name}, {Current_Balance: newSum, $push : {Balance: {Previous_Balance: sum, Previous_Balance_Date: Date.now()}}});
+                ctx.status = 200;
+                ctx.body = { message: `Creditor Ledger Updated`};
+            }
             let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeductedaftertdir, Narration, Transaction_Date, Invoice_Date,disc_recieved });
             await journal.save();
             ctx.status = 200;

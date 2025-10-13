@@ -26,6 +26,12 @@ const journalSchema = new mongoose.Schema({
     },
     Invoice_Date : {
         type: Date
+    },
+    Disc_Allowed: {
+        type: Number
+    },
+    Disc_Received :{
+        type: Number
     }
 }, {timestamp: true})
 
