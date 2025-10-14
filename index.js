@@ -7,6 +7,8 @@ const ledgerRoutes = require('./routes/ledgerRoutes');
 const debtorRoutes= require('./routes/debtorRoutes');
 const assetRoutes= require('./routes/assetRoutes');
 const creditorRoutes = require('./routes/creditorRoutes')
+const http = require('http');
+const { Server } = require('socket.io');
 const journalRoutes = require('./routes/journalRoutes');
 const ratelimit = require('koa-ratelimit');
 const Redis = require('ioredis');
@@ -16,7 +18,32 @@ const { bearerToken } = require('koa-bearer-token');
 const db = new Map();
 
 const app = new Koa();
+const httpServer = http.createServer(app.callback()); // Koa exposes its application as a request handler via app.callback()
 
+// Initialize Socket.IO with the HTTP server
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*', // Allow all origins for development
+    methods: ['GET', 'POST']
+  }
+});
+
+// Define your Socket.IO connection handler
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // Listen for 'chat message' events from the client
+  socket.on('chat message', (msg) => {
+    console.log(`Message from ${socket.id}: ${msg}`);
+    // Broadcast the message to all connected clients
+    io.emit('chat message', msg);
+  });
+
+  // Handle client disconnections
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
 // Connect to MongoDB
 connectDB();
 
@@ -54,7 +81,6 @@ app.use(ledgerRoutes.routes()).use(ledgerRoutes.allowedMethods());
 app.use(debtorRoutes.routes()).use(debtorRoutes.allowedMethods());
 app.use(assetRoutes.routes()).use(assetRoutes.allowedMethods());
 app.use(creditorRoutes.routes()).use(creditorRoutes.allowedMethods());
-
 
 
 // Start the server

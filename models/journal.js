@@ -22,15 +22,21 @@ const journalSchema = new mongoose.Schema({
         type: String
     },
     Transaction_Date: {
-        type: Date,
+        type: String
     },
     Invoice_Date : {
-        type: Date
+        type: String
     },
     Disc_Allowed: {
         type: Number
     },
     Disc_Received :{
+        type: Number
+    },
+    profit_on_sale_of_asset : {
+        type: Number     
+    },
+    loss_on_sale_of_asset : {
         type: Number
     }
 }, {timestamp: true})

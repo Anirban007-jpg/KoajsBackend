@@ -1,7 +1,7 @@
 
 const moment = require('moment');
 const Ledger = require('../models/ledger')
-const { isBefore, isSameDay } = require('date-fns');
+const { isBefore, isSameDay, parseISO } = require('date-fns');
 
 exports.createLedger = async (ctx) => {
     const { Ledger_Name,Opening_Balance,type_of_ledger,balance_type,BS_Type_Item,PL_Type_Item } = ctx.request.body;
@@ -64,9 +64,10 @@ exports.updateClosingBalanceLedgers = async (ctx) => {
     try{
         let ledgers = await Ledger.findOne({Ledger_Name: LedgerName});
         // console.log(ledgers);
-        let newDate = moment(new Date(Date.now())).format("DD-MM-YYYY");
+        let date = format(toDate(Date.now()), "MM-dd-yyyy");
+        
         // console.log(newDate);
-        if (isSameDay(newDate,"31-03-26")){
+        if (isSameDay(date,"31-03-26")){
             // console.log("hellp");
             const ledgername = ledgers.Ledger_Name;
             let updatedledger = await Ledger.updateOne({Ledger_Name: ledgername}, {$set : {Closing_Balance: ledgers.Current_Balance}} , {$push : {Balance: {Previous_Balance: ledgers.Closing_Balance, Previous_Balance_Date: Date.now()}}},{ upsert: true });

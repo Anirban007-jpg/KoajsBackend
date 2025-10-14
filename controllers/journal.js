@@ -6,6 +6,7 @@ const math = require("mathjs");
 const Debtor = require('../models/debtor');
 const { updateDebtor } = require('./debtor');
 const { updateCreditor } = require('./creditor');
+const { format, parseISO, toDate } = require('date-fns');
 
 exports.createJournal = async (ctx) => {
     const { Debit_Item_AC, Credit_Item_AC, Amount_Deducted, Narration, Transaction_Date, Invoice_Date } = ctx.request.body;
@@ -14,6 +15,9 @@ exports.createJournal = async (ctx) => {
         // const authUserId = await jwtDecode(token);
         // let individual = authUserId._id;
 
+        let date1 = format(toDate(Transaction_Date), "MM-dd-yyyy");
+        let date2 = format(toDate(Invoice_Date), "MM-dd-yyyy");
+        console.log(date1,date2)
         // asset case
 
         if ("Debtor A/C".localeCompare(Debit_Item_AC) == 0 && "Sales A/C".localeCompare(Credit_Item_AC) == 0) {
@@ -60,7 +64,7 @@ exports.createJournal = async (ctx) => {
             }
 
             console.log(disc_allowed)
-            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeductedaftertdir, Narration, Transaction_Date, Invoice_Date, Disc_Allowed: disc_allowed });
+            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeductedaftertdir, Narration, Transaction_Date:date1, Invoice_Date:date2, Disc_Allowed: disc_allowed });
             await journal.save();
             ctx.status = 200;
             ctx.body = { message: `Journal Created Successfully`, journal };
@@ -111,7 +115,7 @@ exports.createJournal = async (ctx) => {
                 ctx.status = 200;
                 ctx.body = { message: `Creditor Ledger Updated` };
             }
-            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeducted, Narration, Transaction_Date, Invoice_Date, Disc_Received: disc_recieved });
+            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted: newAmtDeducted, Narration, Transaction_Date:date1, Invoice_Date:date2, Disc_Received: disc_recieved });
             await journal.save();
             ctx.status = 200;
             ctx.body = { message: `Journal Created Successfully`, journal };
@@ -144,7 +148,7 @@ exports.createJournal = async (ctx) => {
                     await Ledger.updateOne({ Ledger_Name: Debit_Ledger.Ledger_Name }, { Current_Balance:  newdebitAmt }, { upsert: true })
                 }
             }
-            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted, Narration, Transaction_Date, Invoice_Date });
+            let journal = new Journal({ Debit_Item_AC, Credit_Item_AC, Amount_Deducted, Narration, Transaction_Date:date1, Invoice_Date:date2 });
             await journal.save();
             ctx.status = 200;
             ctx.body = { message: `Journal Created Successfully`, journal };
