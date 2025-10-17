@@ -24,6 +24,9 @@ const bankSchema = new mongoose.Schema({
         type: ObjectId,
         ref: 'Ledger'
     }],
+    Bank_Amt : {
+        type: Number
+    },
     Balance: [{
         Previous_Balance: {
             type: Number

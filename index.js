@@ -7,6 +7,7 @@ const ledgerRoutes = require('./routes/ledgerRoutes');
 const debtorRoutes= require('./routes/debtorRoutes');
 const assetRoutes= require('./routes/assetRoutes');
 const creditorRoutes = require('./routes/creditorRoutes')
+const bankRoutes = require('./routes/bankRoutes');
 const http = require('http');
 const { Server } = require('socket.io');
 const journalRoutes = require('./routes/journalRoutes');
@@ -81,6 +82,7 @@ app.use(ledgerRoutes.routes()).use(ledgerRoutes.allowedMethods());
 app.use(debtorRoutes.routes()).use(debtorRoutes.allowedMethods());
 app.use(assetRoutes.routes()).use(assetRoutes.allowedMethods());
 app.use(creditorRoutes.routes()).use(creditorRoutes.allowedMethods());
+app.use(bankRoutes.routes()).use(bankRoutes.allowedMethods());
 
 
 // Start the server
