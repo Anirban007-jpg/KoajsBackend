@@ -1,5 +1,5 @@
 const Router = require('koa-router');
-const { requireSignin } = require('../controllers/authController');
+const { requireSignin, CompanyMiddleware } = require('../controllers/authController');
 const { createbank, getBanks, updateBank } = require('../controllers/bank');
 
 
